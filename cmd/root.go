@@ -5,7 +5,6 @@ import (
 	"github.com/9-Realms-Dev/muninn-client/internal/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"log"
 	"os"
 )
 
@@ -24,10 +23,7 @@ var (
 
 func ActivateTui(cmd *cobra.Command, args []string) {
 	util.Logger.Info("starting tui")
-	p := tui.StartTui()
-	if _, err := p.Run(); err != nil {
-		log.Fatal(err)
-	}
+	tui.StartTui()
 }
 
 func Execute() error {

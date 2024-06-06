@@ -5,6 +5,4 @@ use (
 	pkg/muninn-core
 )
 
-replace (
-	github.com/9-Realms-Dev/muninn-core v0.0.0 => ./pkg/muninn-core
-)
+replace github.com/9-Realms-Dev/muninn-core v0.0.0 => ./pkg/muninn-core

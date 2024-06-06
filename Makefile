@@ -1,2 +1,2 @@
 dev:
-go run -workfile=go.work main.go
+	go run main.go

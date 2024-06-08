@@ -1,0 +1,13 @@
+### JSON Placer Todo
+POST https://jsonplaceholder.typicode.com/todos
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "john",
+  "occupation": "something"
+}
+
+### JSON Placer GET Todo
+GET https://jsonplaceholder.typicode.com/todos
+Accept: application/json

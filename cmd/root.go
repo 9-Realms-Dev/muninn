@@ -23,7 +23,12 @@ var (
 
 func ActivateTui(cmd *cobra.Command, args []string) {
 	util.Logger.Info("starting tui")
-	tui.StartTui()
+	cd, err := os.Getwd()
+	if err != nil {
+		util.Logger.Error(err)
+	}
+
+	tui.StartTui(cd)
 }
 
 func Execute() error {

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/filepicker"
-	"github.com/charmbracelet/bubbles/help"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -23,7 +22,6 @@ type filepickerModel struct {
 	selected string
 	quitting bool
 	err      error
-	help     help.Model
 }
 
 func initFilepicker(path string) filepickerModel {
@@ -36,7 +34,6 @@ func initFilepicker(path string) filepickerModel {
 
 	return filepickerModel{
 		picker: fp,
-		help:   help.New(),
 	}
 }
 
@@ -46,6 +43,7 @@ func (m filepickerModel) Init() tea.Cmd {
 
 func (m filepickerModel) Update(msg tea.Msg) (filepickerModel, tea.Cmd) {
 	var cmd tea.Cmd
+	var fileSelectCmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.picker.Height = msg.Height - (divisor * 2)
@@ -56,6 +54,9 @@ func (m filepickerModel) Update(msg tea.Msg) (filepickerModel, tea.Cmd) {
 	if didSelect, path := m.picker.DidSelectFile(msg); didSelect {
 		// Get the path of the selected file.
 		m.selected = path
+
+		// Send the cmd for updating the file view
+		fileSelectCmd = setFile(m.selected)
 	}
 
 	// Did the user select a disabled file?
@@ -67,7 +68,7 @@ func (m filepickerModel) Update(msg tea.Msg) (filepickerModel, tea.Cmd) {
 		return m, tea.Batch(cmd, clearErrorAfter(2*time.Second))
 	}
 
-	return m, cmd
+	return m, tea.Batch(cmd, fileSelectCmd)
 }
 
 func (m filepickerModel) View() string {

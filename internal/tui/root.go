@@ -2,10 +2,12 @@ package tui
 
 import (
 	"fmt"
-	"github.com/charmbracelet/lipgloss"
 	"os"
 
+	"github.com/charmbracelet/lipgloss"
+
 	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -19,7 +21,10 @@ const (
 
 const divisor = 4
 
-type tuiState interface{}
+var keymap = DefaultKeyMap()
+
+type tuiState interface {
+}
 
 type mainModel struct {
 	help     help.Model
@@ -48,11 +53,13 @@ func (m *mainModel) Prev() {
 func newModel(path string) mainModel {
 	helpText := help.New()
 	picker := initFilepicker(path)
+	list := initList()
 
 	return mainModel{
 		help: helpText,
 		states: []tuiState{
 			picker,
+			fileViewModel{list: list},
 		},
 	}
 }
@@ -62,18 +69,35 @@ func (m mainModel) Init() tea.Cmd {
 }
 
 func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	var cmds []tea.Cmd
 	switch msg := msg.(type) {
-	// TODO: Add http msg types later
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "q":
+		switch {
+		case key.Matches(msg, keymap.Quit):
 			m.quitting = true
 			return m, tea.Quit
+		case key.Matches(msg, keymap.Next):
+			m.Next()
+		case key.Matches(msg, keymap.Prev):
+			m.Prev()
 		}
+	case fileSelectedMsg:
+		// Send update regardless if the file view is focused or not
+		m.states[file_view], cmd = m.states[file_view].(fileViewModel).Update(msg)
+		cmds = append(cmds, cmd)
 	}
-	var cmd tea.Cmd
-	m.states[m.focused], cmd = m.states[m.focused].(filepickerModel).Update(msg)
-	return m, cmd
+
+	switch m.focused {
+	case filepicker_view:
+		m.states[m.focused], cmd = m.states[m.focused].(filepickerModel).Update(msg)
+		cmds = append(cmds, cmd)
+	case file_view:
+		m.states[m.focused], cmd = m.states[m.focused].(fileViewModel).Update(msg)
+		cmds = append(cmds, cmd)
+	}
+
+	return m, tea.Batch(cmds...)
 }
 
 var passiveStyle = lipgloss.NewStyle().
@@ -89,9 +113,16 @@ func (m mainModel) View() string {
 	switch m.focused {
 	case filepicker_view:
 		return lipgloss.JoinHorizontal(
-			lipgloss.Center,
-			activeStyle.Render(m.states[0].(filepickerModel).View()),
+			lipgloss.Top,
+			activeStyle.Render(m.states[filepicker_view].(filepickerModel).View()),
+			passiveStyle.Render(m.states[file_view].(fileViewModel).View()),
 			passiveStyle.Render(""),
+		)
+	case file_view:
+		return lipgloss.JoinHorizontal(
+			lipgloss.Top,
+			passiveStyle.Render(m.states[filepicker_view].(filepickerModel).View()),
+			activeStyle.Render(m.states[file_view].(fileViewModel).View()),
 			passiveStyle.Render(""),
 		)
 	default:
@@ -107,7 +138,7 @@ func StartTui(path string) {
 	}
 	defer f.Close()
 
-	p := tea.NewProgram(newModel(path), tea.WithAltScreen())
+	p := tea.NewProgram(newModel(path))
 	if _, err := p.Run(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"strings"
+
 	"github.com/9-Realms-Dev/muninn-client/internal/util"
 	munnin "github.com/9-Realms-Dev/muninn-core"
+	"github.com/9-Realms-Dev/muninn-core/formats"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 var (
@@ -51,6 +53,13 @@ func sendCommand(cmd *cobra.Command, args []string) error {
 				}
 
 				util.Logger.Debug(response)
+
+				json, err := formats.FormatJSONResponse(response.Response)
+				if err != nil {
+					util.Logger.Fatal(err.Error())
+				}
+
+				util.Logger.Info(json.CliRender())
 				return nil
 			}
 		}

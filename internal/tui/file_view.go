@@ -91,6 +91,7 @@ func (m fileViewModel) Update(msg tea.Msg) (fileViewModel, tea.Cmd) {
 		m, cmd = m.SelectFile(msg.path)
 		cmds = append(cmds, cmd)
 	}
+
 	m.list, cmd = m.list.Update(msg)
 	cmds = append(cmds, cmd)
 	return m, tea.Batch(cmds...)

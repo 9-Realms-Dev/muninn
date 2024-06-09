@@ -23,8 +23,7 @@ const divisor = 4
 
 var keymap = DefaultKeyMap()
 
-type tuiState interface {
-}
+type tuiState interface{}
 
 type mainModel struct {
 	help     help.Model
@@ -60,6 +59,7 @@ func newModel(path string) mainModel {
 		states: []tuiState{
 			picker,
 			fileViewModel{list: list},
+			responseViewModel{},
 		},
 	}
 }
@@ -86,6 +86,9 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Send update regardless if the file view is focused or not
 		m.states[file_view], cmd = m.states[file_view].(fileViewModel).Update(msg)
 		cmds = append(cmds, cmd)
+	case httpRespMsg:
+		m.states[response_view], cmd = m.states[response_view].(responseViewModel).Update(msg)
+		cmds = append(cmds, cmd)
 	}
 
 	switch m.focused {
@@ -94,6 +97,9 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, cmd)
 	case file_view:
 		m.states[m.focused], cmd = m.states[m.focused].(fileViewModel).Update(msg)
+		cmds = append(cmds, cmd)
+	case response_view:
+		m.states[m.focused], cmd = m.states[m.focused].(responseViewModel).Update(msg)
 		cmds = append(cmds, cmd)
 	}
 
@@ -116,14 +122,21 @@ func (m mainModel) View() string {
 			lipgloss.Top,
 			activeStyle.Render(m.states[filepicker_view].(filepickerModel).View()),
 			passiveStyle.Render(m.states[file_view].(fileViewModel).View()),
-			passiveStyle.Render(""),
+			passiveStyle.Render(m.states[response_view].(responseViewModel).View()),
 		)
 	case file_view:
 		return lipgloss.JoinHorizontal(
 			lipgloss.Top,
 			passiveStyle.Render(m.states[filepicker_view].(filepickerModel).View()),
 			activeStyle.Render(m.states[file_view].(fileViewModel).View()),
-			passiveStyle.Render(""),
+			passiveStyle.Render(m.states[response_view].(responseViewModel).View()),
+		)
+	case response_view:
+		return lipgloss.JoinHorizontal(
+			lipgloss.Top,
+			passiveStyle.Render(m.states[filepicker_view].(filepickerModel).View()),
+			passiveStyle.Render(m.states[file_view].(fileViewModel).View()),
+			activeStyle.Render(m.states[response_view].(responseViewModel).View()),
 		)
 	default:
 		return "something is wrong"
@@ -138,7 +151,7 @@ func StartTui(path string) {
 	}
 	defer f.Close()
 
-	p := tea.NewProgram(newModel(path))
+	p := tea.NewProgram(newModel(path), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

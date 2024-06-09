@@ -11,7 +11,21 @@ import (
 )
 
 var fileViewKeyMap = DefaultFileViewKeyMap()
-var docStyle = lipgloss.NewStyle().Margin(1, 2)
+
+var (
+	appStyle = lipgloss.NewStyle().Padding(1, 2)
+
+	listTitleStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#1a1b26")).
+			Background(lipgloss.Color("#c0caf5")).
+			Padding(0, 1)
+	listItemTitleStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.AdaptiveColor{Light: "#c5c8c6", Dark: "#c5c8c6"})
+	listActiveItemTitleStyle = lipgloss.NewStyle().
+					Foreground(lipgloss.AdaptiveColor{Light: "#54ced6", Dark: "#54ced6"})
+	filterPromptStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.AdaptiveColor{Light: "#e0af68", Dark: "#e0af68"})
+)
 
 // Items
 type item struct {
@@ -32,8 +46,16 @@ type fileViewModel struct {
 }
 
 func initList() list.Model {
+	delegate := list.NewDefaultDelegate()
+
+	delegate.Styles.NormalTitle = listItemTitleStyle
+	delegate.Styles.NormalDesc = listItemTitleStyle
+
+	delegate.Styles.SelectedTitle = listActiveItemTitleStyle
+	delegate.Styles.SelectedDesc = listActiveItemTitleStyle
+
 	// TODO: Setup reset list for window size changes
-	initList := list.New([]list.Item{}, list.NewDefaultDelegate(), 50, 20)
+	initList := list.New([]list.Item{}, delegate, 50, 20)
 	initList.Title = "Waiting for file..."
 
 	return initList
@@ -65,6 +87,10 @@ func (m fileViewModel) SelectFile(path string) (fileViewModel, tea.Cmd) {
 		m.requests = requests
 		m.list.Title = "Files requests"
 		m.list.SetItems(items)
+
+		// Style the list
+		m.list.Styles.Title = listTitleStyle
+
 		m.path = path
 	}
 	return m, cmd
@@ -79,13 +105,14 @@ func (m fileViewModel) Update(msg tea.Msg) (fileViewModel, tea.Cmd) {
 	var cmds []tea.Cmd
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		h, v := docStyle.GetFrameSize()
-		m.list.SetSize(msg.Width-h, msg.Height-v)
+		m.list.SetHeight(msg.Height - (divisor * 2))
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, fileViewKeyMap.Select):
-			cmd = m.SelectRequest()
-			return m, cmd
+			if m.list.FilterState() != list.Filtering {
+				cmd = m.SelectRequest()
+				return m, cmd
+			}
 		}
 	case fileSelectedMsg:
 		m, cmd = m.SelectFile(msg.path)

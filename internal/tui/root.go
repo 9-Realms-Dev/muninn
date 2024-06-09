@@ -108,12 +108,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 var passiveStyle = lipgloss.NewStyle().
 	Padding(1, 2).
-	Border(lipgloss.HiddenBorder())
+	Border(lipgloss.RoundedBorder()).
+	BorderForeground(lipgloss.Color("#7aa2f7"))
 
 var activeStyle = lipgloss.NewStyle().
 	Padding(1, 2).
 	Border(lipgloss.RoundedBorder()).
-	BorderForeground(lipgloss.Color("62"))
+	BorderForeground(lipgloss.Color("#7dcfff"))
 
 func (m mainModel) View() string {
 	switch m.focused {

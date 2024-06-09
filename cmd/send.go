@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/9-Realms-Dev/muninn-client/internal/util"
@@ -59,7 +60,7 @@ func sendCommand(cmd *cobra.Command, args []string) error {
 					util.Logger.Fatal(err.Error())
 				}
 
-				util.Logger.Info(json.CliRender())
+				fmt.Println(json.CliRender())
 				return nil
 			}
 		}

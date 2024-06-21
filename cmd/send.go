@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/9-Realms-Dev/muninn-client/internal/util"
 	munnin "github.com/9-Realms-Dev/muninn-core"
 	"github.com/9-Realms-Dev/muninn-core/formats"
+	"github.com/9-Realms-Dev/muninn/internal/util"
 	"github.com/spf13/cobra"
 )
 

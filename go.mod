@@ -1,4 +1,4 @@
-module github.com/9-Realms-Dev/muninn-client
+module github.com/9-Realms-Dev/muninn
 
 go 1.22.0
 
@@ -10,8 +10,6 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.19.0
 )
-
-replace github.com/9-Realms-Dev/muninn-core v0.0.0 => ./pkg/muninn-core
 
 require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect

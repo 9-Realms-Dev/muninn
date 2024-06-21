@@ -1,0 +1,2 @@
+[submodule "pkg/muninn-core"]
+	url = https://github.com/9-Realms-Dev/muninn-core

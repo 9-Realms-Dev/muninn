@@ -3,7 +3,7 @@ module github.com/9-Realms-Dev/muninn
 go 1.22.0
 
 require (
-	github.com/9-Realms-Dev/muninn-core v0.0.0
+	github.com/9-Realms-Dev/muninn-core v1.0.0
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.26.4
 	github.com/charmbracelet/log v0.4.0

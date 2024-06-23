@@ -54,14 +54,44 @@ Key components:
 
 ### CLI commands
 
+### Activate the TUI
+To start the interactive TUI just run `munnin`
+
+#### Global Controls
+| Bindings    | Action                        |
+|:------------|:------------------------------|
+| `tab`       | Shift active pane to right    |
+| `shift+tab` | Shift active pane to the left |
+| `q`         | exit tui                      |
+
+#### Filepicker Controls
+| Bindings | Action                   |
+|:---------|:-------------------------|
+| `h`      | leave current directory  |
+| `l`      | go into directory        |
+| `j`      | cycle down the file list |
+| `k`      | cycle up the file list   |
+| `enter`  | select file              |
+
+#### Request List Controls
+| Bindings | Action                      |
+|:---------|:----------------------------|
+| `j`      | cycle down the request list |
+| `k`      | cycle up the request list   |
+| `enter`  | sendd request               |
+
 #### Send Command
 Send one or more requests from the CLI:
 
 ```bash
 muninn send -f examples/jsonplaceholder.http -r "JSON Placer GET Todo"
 ```
-- `-f`:(Required) Select the file to use
-- `-r`:(Optional) Select a specific request. If omitted, all requests in the file will be executed in order.
+
+#### CLI Flags
+| Flag | Required/Optional | Description                                                                                |
+|:-----|:-----------------:|:-------------------------------------------------------------------------------------------|
+| `-f` |     Required      | Select the file to use                                                                     | 
+| `-r` |     Optional      | Select a specific request. If omitted, all requests in the file will be executed in order. |
 
 ### Configuration
 

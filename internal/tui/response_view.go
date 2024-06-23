@@ -2,6 +2,9 @@ package tui
 
 import (
 	"fmt"
+	"github.com/9-Realms-Dev/muninn/internal/util"
+	"github.com/atotto/clipboard"
+	"github.com/charmbracelet/bubbles/key"
 	"net/http"
 	"strings"
 
@@ -26,8 +29,9 @@ var (
 		b.Left = "┤"
 		return titleStyle.Copy().BorderStyle(b)
 	}()
-	defaultWidth  = 30
-	defaultHeight = 30
+	defaultWidth       = 20
+	defaultHeight      = 20
+	responseViewKeyMap = DefaultResponseViewKeyMap()
 )
 
 type responseViewModel struct {
@@ -35,6 +39,7 @@ type responseViewModel struct {
 	viewport viewport.Model
 	ready    bool
 	content  string
+	body     string
 	err      error
 }
 
@@ -51,13 +56,14 @@ func (m responseViewModel) RenderResponse(pkg munnin.HttpResponse) (responseView
 	}
 
 	m.response = resp
-	m.content = json.CliRender()
+	m.content = json.CliRender(false)
+	m.body = json.RawBody
 
 	headerHeight := lipgloss.Height(m.headerView())
 	footerHeight := lipgloss.Height(m.footerView())
 	verticalMarginHeight := headerHeight + footerHeight
 
-	m.viewport = viewport.New(defaultWidth*2, defaultHeight-verticalMarginHeight)
+	m.viewport = viewport.New(defaultWidth*2, util.SetDefaultHeight(maxHeight)-verticalMarginHeight)
 	m.viewport.YPosition = headerHeight
 	m.viewport.HighPerformanceRendering = useHighPerformanceRenderer
 	m.viewport.SetContent(m.content)
@@ -111,6 +117,14 @@ func (m responseViewModel) Update(msg tea.Msg) (responseViewModel, tea.Cmd) {
 			// This is needed for high-performance rendering only.
 			cmds = append(cmds, viewport.Sync(m.viewport))
 		}
+	case tea.KeyMsg:
+		switch {
+		case key.Matches(msg, responseViewKeyMap.CopyBody):
+			err := clipboard.WriteAll(m.body)
+			if err != nil {
+				util.Logger.Error(err)
+			}
+		}
 	case httpRespMsg:
 		m, cmd = m.RenderResponse(*msg.Response)
 		cmds = append(cmds, cmd)
@@ -127,7 +141,11 @@ func (m responseViewModel) View() string {
 	if !m.ready {
 		return "\n  Initializing..."
 	}
-	return fmt.Sprintf("%s\n%s\n%s", m.headerView(), m.viewport.View(), m.footerView())
+	return fmt.Sprintf("%s\n%s\n%s\n%s", m.headerView(), m.viewport.View(), m.footerView(), m.helpView())
+}
+
+func (m responseViewModel) helpView() string {
+	return "press c to copy body"
 }
 
 func (m responseViewModel) headerView() string {

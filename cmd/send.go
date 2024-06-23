@@ -60,7 +60,7 @@ func sendCommand(cmd *cobra.Command, args []string) error {
 					util.Logger.Fatal(err.Error())
 				}
 
-				fmt.Println(json.CliRender())
+				fmt.Println(json.CliRender(false))
 				return nil
 			}
 		}

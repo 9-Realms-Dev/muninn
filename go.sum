@@ -1,5 +1,6 @@
 github.com/9-Realms-Dev/muninn-core v1.0.0 h1:Menmzm+/Ccnb4y6ulrcTs5T9t2oEGR8dzM046JknMf0=
 github.com/9-Realms-Dev/muninn-core v1.0.0/go.mod h1:XG8JODWLo4IN4mLVjbErRcbB+2EM6ZvG6/5B+Ig/sqE=
+github.com/9-Realms-Dev/muninn-core v1.0.1/go.mod h1:XG8JODWLo4IN4mLVjbErRcbB+2EM6ZvG6/5B+Ig/sqE=
 github.com/atotto/clipboard v0.1.4 h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=
 github.com/atotto/clipboard v0.1.4/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=

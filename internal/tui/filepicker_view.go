@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/9-Realms-Dev/muninn/internal/util"
 	"github.com/charmbracelet/bubbles/filepicker"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -32,12 +33,16 @@ func initFilepicker(path string) filepickerModel {
 	fp.ShowSize = false
 	fp.AutoHeight = false
 
+	util.Logger.Info(fp.CurrentDirectory)
+
+	fp.Init()
 	return filepickerModel{
 		picker: fp,
 	}
 }
 
-func (m filepickerModel) Init() tea.Cmd {
+func (m filepickerModel) Init(path string) tea.Cmd {
+	util.Logger.Debug("Running filepickerModel init")
 	return nil
 }
 
@@ -46,7 +51,7 @@ func (m filepickerModel) Update(msg tea.Msg) (filepickerModel, tea.Cmd) {
 	var fileSelectCmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.picker.Height = msg.Height - (divisor * 2)
+		m.picker.Height = msg.Height / 4
 	}
 	m.picker, cmd = m.picker.Update(msg)
 
@@ -76,13 +81,9 @@ func (m filepickerModel) View() string {
 		return ""
 	}
 	var s strings.Builder
-	s.WriteString("\n  ")
+	s.WriteString("Select the .http file you which to work on\n")
 	if m.err != nil {
 		s.WriteString(m.picker.Styles.DisabledFile.Render(m.err.Error()))
-	} else if m.selected == "" {
-		s.WriteString("Pick a file: " + m.picker.CurrentDirectory)
-	} else {
-		s.WriteString("Selected file: \n" + m.picker.Styles.Selected.Render(m.selected))
 	}
 	s.WriteString("\n\n" + m.picker.View() + "\n")
 	// TODO: Add a kep map for the filepicker settings

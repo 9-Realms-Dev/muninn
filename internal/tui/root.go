@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"github.com/9-Realms-Dev/muninn/internal/util"
 	"os"
 
 	"github.com/charmbracelet/lipgloss"
@@ -19,7 +20,11 @@ const (
 	response_view
 )
 
-const divisor = 4
+var (
+	maxHeight = 100
+	maxWidth  = 100
+	divisor   = 4
+)
 
 var keymap = DefaultKeyMap()
 
@@ -72,6 +77,10 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		util.Logger.Debug(msg)
+		maxHeight = msg.Height
+		maxWidth = msg.Width
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, keymap.Quit):
@@ -89,6 +98,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case httpRespMsg:
 		m.states[response_view], cmd = m.states[response_view].(responseViewModel).Update(msg)
 		cmds = append(cmds, cmd)
+		m.focused = response_view
 	}
 
 	switch m.focused {
@@ -106,39 +116,52 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
+var rootStyle = lipgloss.NewStyle().
+	Width(maxWidth+(maxWidth-40)).
+	Height(util.SetDefaultHeight(maxHeight/3)).
+	Padding(0, 2).
+	Border(lipgloss.RoundedBorder()).
+	BorderForeground(lipgloss.Color("#7aa2f7"))
+
 var passiveStyle = lipgloss.NewStyle().
 	Padding(1, 2).
 	Border(lipgloss.RoundedBorder()).
+	Width(maxWidth / 2).
+	Height(maxHeight / 3).
+	MaxHeight(util.SetDefaultHeight(maxHeight)).
 	BorderForeground(lipgloss.Color("#7aa2f7"))
 
 var activeStyle = lipgloss.NewStyle().
 	Padding(1, 2).
 	Border(lipgloss.RoundedBorder()).
+	Width(maxWidth / 2).
+	Height(maxHeight / 3).
+	MaxHeight(util.SetDefaultHeight(maxHeight)).
 	BorderForeground(lipgloss.Color("#7dcfff"))
 
 func (m mainModel) View() string {
 	switch m.focused {
 	case filepicker_view:
-		return lipgloss.JoinHorizontal(
+		return rootStyle.Render(lipgloss.JoinHorizontal(
 			lipgloss.Top,
 			activeStyle.Render(m.states[filepicker_view].(filepickerModel).View()),
 			passiveStyle.Render(m.states[file_view].(fileViewModel).View()),
 			passiveStyle.Render(m.states[response_view].(responseViewModel).View()),
-		)
+		))
 	case file_view:
-		return lipgloss.JoinHorizontal(
+		return rootStyle.Render(lipgloss.JoinHorizontal(
 			lipgloss.Top,
 			passiveStyle.Render(m.states[filepicker_view].(filepickerModel).View()),
 			activeStyle.Render(m.states[file_view].(fileViewModel).View()),
 			passiveStyle.Render(m.states[response_view].(responseViewModel).View()),
-		)
+		))
 	case response_view:
-		return lipgloss.JoinHorizontal(
+		return rootStyle.Render(lipgloss.JoinHorizontal(
 			lipgloss.Top,
 			passiveStyle.Render(m.states[filepicker_view].(filepickerModel).View()),
 			passiveStyle.Render(m.states[file_view].(fileViewModel).View()),
 			activeStyle.Render(m.states[response_view].(responseViewModel).View()),
-		)
+		))
 	default:
 		return "something is wrong"
 	}

@@ -63,3 +63,27 @@ func DefaultFileViewKeyMap() FileViewKeyMap {
 		),
 	}
 }
+
+type ResponseViewKeyMap struct {
+	CopyBody key.Binding
+}
+
+func (k ResponseViewKeyMap) ShortHelp() []key.Binding {
+	return []key.Binding{k.CopyBody}
+}
+
+func (k ResponseViewKeyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{
+		{k.CopyBody}, // first column
+		{},           // second column
+	}
+}
+
+func DefaultResponseViewKeyMap() ResponseViewKeyMap {
+	return ResponseViewKeyMap{
+		CopyBody: key.NewBinding(
+			key.WithKeys("c"),
+			key.WithHelp("c", "copy body"),
+		),
+	}
+}

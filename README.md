@@ -93,7 +93,7 @@ muninn send -f examples/jsonplaceholder.http -r "JSON Placer GET Todo"
 | `-f` |     Required      | Select the file to use                                                                     | 
 | `-r` |     Optional      | Select a specific request. If omitted, all requests in the file will be executed in order. |
 
-### Configuration
+## Configuration
 
 Configuration is on the roadmap for Muninn. Stay tuned for updates!
 

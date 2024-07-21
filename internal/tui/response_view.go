@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/9-Realms-Dev/muninn/internal/util"
 	"github.com/atotto/clipboard"
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"net/http"
 	"strings"
@@ -41,6 +42,8 @@ type responseViewModel struct {
 	content  string
 	body     string
 	err      error
+	Help     help.Model
+	KeyMap   ResponseViewKeyMap
 }
 
 func (m responseViewModel) RenderResponse(pkg munnin.HttpResponse) (responseViewModel, tea.Cmd) {
@@ -73,7 +76,10 @@ func (m responseViewModel) RenderResponse(pkg munnin.HttpResponse) (responseView
 }
 
 func (m responseViewModel) Init() tea.Cmd {
-	return nil
+	m.Help = help.New()
+	m.Help.ShowAll = true
+	m.KeyMap = responseViewKeyMap
+	return m.viewport.Init()
 }
 
 func (m responseViewModel) Update(msg tea.Msg) (responseViewModel, tea.Cmd) {
@@ -145,7 +151,7 @@ func (m responseViewModel) View() string {
 }
 
 func (m responseViewModel) helpView() string {
-	return "press c to copy body"
+	return fmt.Sprintf("\n%s | %s | %s", "c copy body", "↑/k up", "↓/j down")
 }
 
 func (m responseViewModel) headerView() string {

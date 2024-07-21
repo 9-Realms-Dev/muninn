@@ -58,13 +58,16 @@ func newModel(path string) mainModel {
 	helpText := help.New()
 	picker := initFilepicker(path)
 	list := initList()
+	response := responseViewModel{}
+
+	response.Init()
 
 	return mainModel{
 		help: helpText,
 		states: []tuiState{
 			picker,
 			fileViewModel{list: list},
-			responseViewModel{},
+			response,
 		},
 	}
 }

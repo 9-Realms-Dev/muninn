@@ -66,16 +66,18 @@ func DefaultFileViewKeyMap() FileViewKeyMap {
 
 type ResponseViewKeyMap struct {
 	CopyBody key.Binding
+	Up       key.Binding
+	Down     key.Binding
 }
 
 func (k ResponseViewKeyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.CopyBody}
+	return []key.Binding{k.CopyBody, k.Up, k.Down}
 }
 
 func (k ResponseViewKeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.CopyBody}, // first column
-		{},           // second column
+		{k.CopyBody},
+		{k.Up, k.Down},
 	}
 }
 
@@ -84,6 +86,14 @@ func DefaultResponseViewKeyMap() ResponseViewKeyMap {
 		CopyBody: key.NewBinding(
 			key.WithKeys("c"),
 			key.WithHelp("c", "copy body"),
+		),
+		Up: key.NewBinding(
+			key.WithKeys("up", "k"),
+			key.WithHelp("↑/k", "up"),
+		),
+		Down: key.NewBinding(
+			key.WithKeys("down", "j"),
+			key.WithHelp("↓/j", "down"),
 		),
 	}
 }

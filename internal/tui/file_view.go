@@ -13,8 +13,10 @@ import (
 var fileViewKeyMap = DefaultFileViewKeyMap()
 
 var (
-	appStyle = lipgloss.NewStyle().Padding(1, 2)
-
+	appStyle       = lipgloss.NewStyle().Padding(1, 2)
+	listEmptyTitle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#5dbffc")).
+			Padding(0, 1)
 	listTitleStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#1a1b26")).
 			Background(lipgloss.Color("#c0caf5")).
@@ -56,6 +58,7 @@ func initList() list.Model {
 
 	// TODO: Setup reset list for window size changes
 	initList := list.New([]list.Item{}, delegate, 50, 20)
+	initList.Styles.Title = listEmptyTitle
 	initList.Title = "Waiting for file..."
 
 	return initList
@@ -100,7 +103,7 @@ func (m fileViewModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m fileViewModel) Update(msg tea.Msg) (fileViewModel, tea.Cmd) {
+func (m fileViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
 	switch msg := msg.(type) {

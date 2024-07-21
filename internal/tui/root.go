@@ -119,9 +119,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 var rootStyle = lipgloss.NewStyle().
 	Width(maxWidth+(maxWidth-40)).
 	Height(util.SetDefaultHeight(maxHeight/3)).
-	Padding(0, 2).
-	Border(lipgloss.RoundedBorder()).
-	BorderForeground(lipgloss.Color("#7aa2f7"))
+	Padding(0, 2)
 
 var passiveStyle = lipgloss.NewStyle().
 	Padding(1, 2).
@@ -137,7 +135,7 @@ var activeStyle = lipgloss.NewStyle().
 	Width(maxWidth / 2).
 	Height(maxHeight / 3).
 	MaxHeight(util.SetDefaultHeight(maxHeight)).
-	BorderForeground(lipgloss.Color("#7dcfff"))
+	BorderForeground(lipgloss.Color("#f69058"))
 
 func (m mainModel) View() string {
 	switch m.focused {

@@ -33,9 +33,6 @@ func initFilepicker(path string) filepickerModel {
 	fp.ShowSize = false
 	fp.AutoHeight = false
 
-	util.Logger.Info(fp.CurrentDirectory)
-
-	fp.Init()
 	return filepickerModel{
 		picker: fp,
 	}
@@ -43,7 +40,7 @@ func initFilepicker(path string) filepickerModel {
 
 func (m filepickerModel) Init(path string) tea.Cmd {
 	util.Logger.Debug("Running filepickerModel init")
-	return nil
+	return m.picker.Init()
 }
 
 func (m filepickerModel) Update(msg tea.Msg) (filepickerModel, tea.Cmd) {

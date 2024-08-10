@@ -60,8 +60,6 @@ func newModel(path string) mainModel {
 	list := initList()
 	response := responseViewModel{}
 
-	response.Init()
-
 	return mainModel{
 		help: helpText,
 		states: []tuiState{
@@ -73,6 +71,7 @@ func newModel(path string) mainModel {
 }
 
 func (m mainModel) Init() tea.Cmd {
+	m.states[filepicker_view].(filepickerModel).Init()
 	return nil
 }
 

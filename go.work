@@ -3,6 +3,9 @@ go 1.22.0
 use (
 	.
 	pkg/muninn-core
+	pkg/bubbles
 )
 
-replace github.com/9-Realms-Dev/muninn-core v1.0.0 => ./pkg/muninn-core
+replace github.com/9-Realms-Dev/muninn-core v1.0.1 => ./pkg/muninn-core
+
+replace github.com/charmbracelet/bubbles v0.18.0 => ./pkg/bubbles

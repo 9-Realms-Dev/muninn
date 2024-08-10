@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/9-Realms-Dev/muninn/internal/tui/bubbles/filepicker"
 	"github.com/9-Realms-Dev/muninn/internal/util"
-	"github.com/charmbracelet/bubbles/filepicker"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -27,7 +27,6 @@ type filepickerModel struct {
 
 func initFilepicker(path string) filepickerModel {
 	fp := filepicker.New()
-	fp.AllowedTypes = []string{".http"}
 	fp.CurrentDirectory = path
 	fp.ShowPermissions = false
 	fp.ShowSize = false
@@ -38,9 +37,10 @@ func initFilepicker(path string) filepickerModel {
 	}
 }
 
-func (m filepickerModel) Init(path string) tea.Cmd {
-	util.Logger.Debug("Running filepickerModel init")
-	return m.picker.Init()
+func (m filepickerModel) Init() tea.Cmd {
+	util.Logger.Debugf("CurrentDirectory: %s", m.picker.CurrentDirectory)
+	m.picker.Init()
+	return nil
 }
 
 func (m filepickerModel) Update(msg tea.Msg) (filepickerModel, tea.Cmd) {
